@@ -48,9 +48,8 @@ jobs:
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
-          key: ${{ secrets.KEY }}
-          port: ${{ secrets.PORT }}
+          password: ${{ secrets.PASS }}
           script: |
             echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
             docker pull ghcr.io/mehranfarhdi/kucoinapi:latest
-            docker-compose -f /root/app/docker-compose.yml up -d --force-recreate --remove-orphans
+            docker-compose -f /root/app/docker-compose.yaml up -d --force-recreate --remove-orphans
