@@ -1,0 +1,59 @@
+version: '3.7'
+services:
+  db:
+    image: postgres:latest
+    environment:
+      - POSTGRES_DB=app
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=supersecretpassword
+
+
+  redis:
+    image: redis:latest
+    container_name: "redis"
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - ./redis:/data
+    restart: always
+
+  webservice:
+    build: ./
+    command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_NAME=app
+      - DB_USER=postgres
+      - DB_PASS=supersecretpassword
+
+  celery:
+    build: ./
+    command: celery -A kucoinapi worker -l info
+    volumes:
+      - ./project/:/usr/src/app/
+    depends_on:
+      - redis
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_NAME=app
+      - DB_USER=postgres
+      - DB_PASS=supersecretpassword
+
+  celery-beat:
+    build: ./
+    command: celery -A kucoinapi beat -l info
+    volumes:
+      - ./project/:/usr/src/app/
+    depends_on:
+      - redis
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_NAME=app
+      - DB_USER=postgres
+      - DB_PASS=supersecretpassword
