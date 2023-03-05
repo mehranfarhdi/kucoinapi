@@ -164,9 +164,9 @@ def condition_sale(symbol, last_tread, sar):
                 last_tread['info']['funds']) < limit_coefficient):
             print('condition_sale: True')
             return True
-        if (sar[0] > sar[1]):
-            print('condition_sale: True')
-            return True
+        # if (sar[0] > sar[1]):
+        #     print('condition_sale: True')
+        #     return True
     print('condition_sale: False')
     return False
 
