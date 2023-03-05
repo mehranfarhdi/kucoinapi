@@ -8,20 +8,20 @@ services:
       - POSTGRES_PASSWORD=supersecretpassword
 
 
-  redis:
-    image: redis:latest
-    container_name: "redis"
-    ports:
-      - "127.0.0.1:6379:6379"
-    volumes:
-      - ./redis:/data
-    restart: always
+#  redis:
+#    image: redis:latest
+#    container_name: "redis"
+#    ports:
+#      - "127.0.0.1:6379:6379"
+#    volumes:
+#      - ./redis:/data
+#    restart: always
 
   webservice:
     build: ./
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - ./project/:/usr/src/app/
+      - ./:/project
     ports:
       - "127.0.0.1:8000:8000"
     depends_on:
@@ -36,7 +36,7 @@ services:
     build: ./
     command: celery -A kucoinapi worker -l info
     volumes:
-      - ./project/:/usr/src/app/
+      - ./:/project
     depends_on:
       - db
     environment:
@@ -49,7 +49,7 @@ services:
     build: ./
     command: celery -A kucoinapi beat -l info
     volumes:
-      - ./project/:/usr/src/app/
+      - ./:/project
     depends_on:
       - db
     environment:
